@@ -81,7 +81,7 @@ struct bitmap read_bmp(char *filename) {
         fseek(fp, 1, SEEK_CUR);
     }
 
-    /* Bitmap data, starting from bottom left corner, ignoring padding */
+    /* Bitmap data, starting from bottom left corner */
     if ((bmp.data = malloc((size_t) (int) bmp.width * (int) bmp.height)) == NULL) {
         printf("Unable to allocate memory for bitmap data.\n");
         free(bmp.palette);
@@ -93,6 +93,8 @@ struct bitmap read_bmp(char *filename) {
         for (x = 0; x < (int) bmp.width; x++) {
             bmp.data[y+x] = fgetc(fp);
         }
+        /* Pad to nearest multiple of 4 */
+        fseek(fp, (int) (ceil(((double) depth * (double) bmp.width)/32)*4)-(int) bmp.width, SEEK_CUR);
     }
 
     fclose(fp);
